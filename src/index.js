@@ -1,28 +1,31 @@
 import "./style.css";
 
 function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function switchImage(imageDiv, index) {
-    Array.from(imageDiv.children).forEach(node => node.style.display = "none");
-    imageDiv.children[index].style.display = "block";
+function switchImage(index) {
+  let div = document.querySelector(".slider");
+  div.style.transform = `translateX(-${index * div.offsetWidth}px)`;
 }
 
-function changeImageOnTimer(imageDiv, timer, index) {
-    if(index == -1) {
-        // sleep(5000);
-        // changeImageOnTimer(imageDiv,timer,imageDiv.children.length-1);
-        return;
-    }
-    else {
-        switchImage(imageDiv, index);
-        sleep(timer);
-        changeImageOnTimer(imageDiv,timer,index-1);
-    }
+async function changeImageOnTimer(timer, index, stop) {
+  if (index == stop) {
+    return;
+  } else {
+    switchImage(index);
+    await sleep(timer);
+    await changeImageOnTimer(timer, index + 1, stop);
+  }
 }
 
-switchImage(document.querySelector(".slider"),0);
-while(true) {
-    // changeImageOnTimer(document.querySelector(".slider"),5000,document.querySelector(".slider").children.length-1);
+async function loop(timer, imageCount) {
+  while (true) {
+    await changeImageOnTimer(timer, 0, imageCount);
+  }
 }
+
+let div = document.querySelector(".slider");
+let imageCount = div.children.length;
+let timer = 1000;
+loop(timer, imageCount);
