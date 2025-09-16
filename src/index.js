@@ -12,13 +12,25 @@ nextB.onclick = () => changeIndex(1);
 
 let buttons = document.querySelectorAll(".buttons > *");
 buttons.forEach((b, i) => {
-  b.onclick = () => switchImage(i);
   b.index = i;
-  index = i;
+  b.onclick = () => {
+    index = i;
+    switchImage(i);
+  };
 });
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function highlightActiveButton() {
+  Array.from(buttons).forEach((b) => {
+    b.style.backgroundColor = "";
+    // console.log(b.style.backgroundColor);
+  });
+  let button = Array.from(buttons).find((b) => b.index == index);
+  button.style.backgroundColor =
+    "var(--ctp-frappe-overlay2)";
 }
 
 function changeIndex(change) {
@@ -33,9 +45,9 @@ function changeIndex(change) {
 }
 
 function switchImage(index) {
+  highlightActiveButton();
   let div = document.querySelector(".slider");
   div.style.transform = `translateX(-${index * div.offsetWidth}px)`;
-  highlightActiveButton();
 }
 
 async function changeImageOnTimer(timer, stop) {
@@ -54,15 +66,6 @@ async function loop(timer, imageCount) {
     await changeImageOnTimer(timer, imageCount);
     index = 0;
   }
-}
-
-function highlightActiveButton() {
-  Array.from(buttons).forEach((b) => {
-    b.style.backgroundColor = "";
-    console.log(b.style.backgroundColor);
-  });
-  Array.from(buttons).find((b) => b.index == index).style.backgroundColor =
-    "white";
 }
 
 loop(timer, imageCount);
